@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../api/api';
 
 interface User {
   id: number;
@@ -26,7 +26,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { username: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/login', credentials);
+      const response = await api.post('/login', credentials);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -38,7 +38,7 @@ export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { rejectWithValue }) => {
     try {
-      await axios.post('/api/logout');
+      await api.post('/logout');
       return null;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Logout failed');

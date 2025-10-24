@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../api/api';
 import type { Task } from '../../types/task';
 
 interface TaskState {
@@ -31,7 +31,7 @@ export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks',
   async () => {
     try {
-      const response = await axios.get('/api/tasks');
+      const response = await api.get('/tasks');
       return Array.isArray(response.data) ? response.data : [];
     } catch (error: any) {
       // Return empty array as fallback instead of rejecting
@@ -44,7 +44,7 @@ export const createTask = createAsyncThunk(
   'tasks/createTask',
   async (taskData: Omit<Task, 'id' | 'createdAt'>, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/tasks', taskData);
+      const response = await api.post('/tasks', taskData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to create task');
@@ -56,7 +56,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({ id, ...taskData }: Partial<Task> & { id: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`/api/tasks/${id}`, taskData);
+      const response = await api.put(`/tasks/${id}`, taskData);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update task');
@@ -68,7 +68,7 @@ export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`/api/tasks/${id}`);
+      await api.delete(`/tasks/${id}`);
       return id;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete task');
